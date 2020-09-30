@@ -9,7 +9,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: elastic-job-k8s-controller
-  namespace: elastic-job
+  namespace: kube-system
   labels:
     app: elastic-job-k8s-controller
 spec:
@@ -27,7 +27,7 @@ spec:
         - /manager
         args:
         - --enable-leader-election
-        image: torchelastic/kubernetes:0.1.0
+        image: 10-20-101-1.caicloudprivatetest.com/release/elastic-controller:v0.2.0-67-g57ef11d-dirty
         name: manager
         resources:
           limits:
