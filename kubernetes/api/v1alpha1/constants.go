@@ -15,4 +15,5 @@ const (
 	DefaultContainerName     = "elasticjob-worker"
 	DefaultContainerPortName = "elasticjob-port"
 	DefaultPort              = 10291
+	DefaultBackend = "etcd"
 )
