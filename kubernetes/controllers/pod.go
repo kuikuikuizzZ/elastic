@@ -100,7 +100,8 @@ func SetClusterSpecForPod(job interface{}, podTemplate *corev1.PodTemplateSpec) 
 	}
 
 	// Set default value if minReplicas and maxReplicas are not set
-	var minReplicas, maxReplicas, nnodes int32
+	var minReplicas, maxReplicas int32
+	var nnodes string
 	if elasticJob.Spec.MinReplicas != nil {
 		minReplicas = *elasticJob.Spec.MinReplicas
 	} else {
@@ -113,7 +114,9 @@ func SetClusterSpecForPod(job interface{}, podTemplate *corev1.PodTemplateSpec) 
 		maxReplicas = desiredReplicas
 	}
 	if maxReplicas == minReplicas {
-		nnodes = maxReplicas
+		nnodes =  strconv.Itoa(int(maxReplicas))
+	} else {
+		nnodes = strconv.Itoa(int(minReplicas))+":"+strconv.Itoa(int(maxReplicas))
 	}
 
 	for i := range podTemplate.Spec.Containers {
@@ -121,27 +124,27 @@ func SetClusterSpecForPod(job interface{}, podTemplate *corev1.PodTemplateSpec) 
 			podTemplate.Spec.Containers[i].Env = make([]corev1.EnvVar, 0)
 		}
 		podTemplate.Spec.Containers[i].Env = append(podTemplate.Spec.Containers[i].Env, corev1.EnvVar{
-			Name:  "RDZV_BACKEND",
+			Name:  "PET_RDZV_BACKEND",
 			Value: v1alpha1.DefaultBackend,
 		})
 		podTemplate.Spec.Containers[i].Env = append(podTemplate.Spec.Containers[i].Env, corev1.EnvVar{
-			Name:  "RDZV_ENDPOINT",
+			Name:  "PET_RDZV_ENDPOINT",
 			Value: elasticJob.Spec.RdzvEndpoint,
 		})
 		podTemplate.Spec.Containers[i].Env = append(podTemplate.Spec.Containers[i].Env, corev1.EnvVar{
-			Name:  "RDZV_ID",
+			Name:  "PET_RDZV_ID",
 			Value: elasticJob.Name,
 		})
 		podTemplate.Spec.Containers[i].Env = append(podTemplate.Spec.Containers[i].Env, corev1.EnvVar{
-			Name:  "TORCHELASTIC_NNODES",
-			Value: strconv.Itoa(int(nnodes)),
+			Name:  "PET_NNODES",
+			Value: nnodes,
 		})
 		podTemplate.Spec.Containers[i].Env = append(podTemplate.Spec.Containers[i].Env, corev1.EnvVar{
-			Name:  "TORCHELASTIC_MINREPLICAS",
+			Name:  "PET_MINREPLICAS",
 			Value: strconv.Itoa(int(minReplicas)),
 		})
 		podTemplate.Spec.Containers[i].Env = append(podTemplate.Spec.Containers[i].Env, corev1.EnvVar{
-			Name:  "TORCHELASTIC_MAXREPLICAS",
+			Name:  "PET_MAXREPLICAS",
 			Value:  strconv.Itoa(int(maxReplicas)),
 		})
 	}

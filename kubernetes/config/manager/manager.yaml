@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - command:
-        - /manager
+        - /elastic-controller
         args:
         - --enable-leader-election
         image: 10-20-101-1.caicloudprivatetest.com/release/elastic-controller:v0.2.0-67-g57ef11d-dirty
@@ -32,8 +32,8 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 30Mi
+            memory: 300Mi
           requests:
             cpu: 100m
-            memory: 20Mi
+            memory: 200Mi
       terminationGracePeriodSeconds: 10
